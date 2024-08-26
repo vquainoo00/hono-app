@@ -1,0 +1,26 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./hms.db"
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  engineType      = "library"
+  previewFeatures = ["driverAdapters"]
+}
+
+model Hotels {
+  id       String @id @default(uuid()) // Using uuid() to generate unique IDs
+  name     String
+  shortName  String
+  location String
+  createdAt DateTime  @default(now())
+  }
+
+
+model Rooms {
+  id       String @id @default(uuid()) // Using uuid() to generate unique IDs
+  name     String
+  floor  String
+  createdAt DateTime  @default(now())
+  }

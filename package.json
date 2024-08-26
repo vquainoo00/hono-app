@@ -1,0 +1,22 @@
+{
+  "name": "my-app",
+  "scripts": {
+    "dev": "wrangler dev src/index.ts",
+    "deploy": "wrangler deploy --minify src/index.ts"
+  },
+  "dependencies": {
+    "@prisma/adapter-d1": "^5.18.0",
+    "@prisma/client": "^5.18.0",
+    "@prisma/extension-accelerate": "^1.1.0",
+    "drizzle-orm": "^0.33.0",
+    "hono": "^4.5.8",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240529.0",
+    "@types/uuid": "^10.0.0",
+    "drizzle-kit": "^0.24.1",
+    "prisma": "^5.18.0",
+    "wrangler": "^3.72.2"
+  }
+}
