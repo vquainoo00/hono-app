@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { v4 as uuidv4 } from 'uuid';
 
-// Service function to get all hotels
+// Service function to get all room
 export const getAllRooms = async (prisma: PrismaClient) => {
   try {
     return await prisma.rooms.findMany();
@@ -11,7 +11,7 @@ export const getAllRooms = async (prisma: PrismaClient) => {
   }
 };
 
-// Service function to create a new hotel
+// Service function to create a new room
 export const createRoom = async (prisma: PrismaClient, name: string, floor: string): Promise<string> => {
   try {
     const id: string = uuidv4();
@@ -19,10 +19,10 @@ export const createRoom = async (prisma: PrismaClient, name: string, floor: stri
       data: { id, name, floor },
     });
     
-    // Return the hotel id, which is of type string
+    // Return the room id, which is of type string
     return room.id;
   } catch (error) {
-    console.error('Error creating hotel:', error);
-    throw new Error('Failed to create hotel');
+    console.error('Error creating room:', error);
+    throw new Error('Failed to create room');
   }
 };

@@ -16,7 +16,7 @@ hotelRoutes.get('/', async (c) => {
   return c.json(
     createResponse(
         201, 
-        'Hotel created successfully', 
+        'Hotels retrieved successfully', 
         hotels
     ), 
     201
