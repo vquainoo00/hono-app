@@ -1,9 +1,9 @@
 import { Hono } from 'hono';
 import { getPrismaClient } from '../prismaClient';
-import { getAllHotels, createHotel } from '../services/hotels';
+import { getAllHotels, createHotel, getHotelById } from '../services/hotels';
 import { HotelSchema } from '../schemas/hotels';
 import type { Env, AppContext } from '../types';
-import { createResponse } from '../utils/responses';
+import { createResponse, errorResponse} from '../utils/responses';
 
 
 
@@ -12,12 +12,30 @@ export const hotelRoutes = new Hono<{ Bindings: Env; Variables: AppContext }>();
 // Fetch all hotels
 hotelRoutes.get('/', async (c) => {
   const prisma = getPrismaClient(c.env);
-  const hotels = await getAllHotels(prisma);
+  const cursor = c.req.query('cursor') || null
+  const itemsPerPage = parseInt(c.req.query('perPage') || '5', 10);
+
+
+  const data  = await getAllHotels(prisma, cursor, itemsPerPage);
   return c.json(
     createResponse(
         201, 
         'Hotels retrieved successfully', 
-        hotels
+        data
+    ), 
+    201
+);
+});
+
+// Fetch by Id
+hotelRoutes.get('/:hotelId', async (c) => {
+  const prisma = getPrismaClient(c.env);
+  const hotel = await getHotelById(prisma, c.req.param('hotelId'));
+  return c.json(
+    createResponse(
+        201, 
+        'Hotel retrieved successfully', 
+        hotel
     ), 
     201
 );
@@ -32,11 +50,11 @@ hotelRoutes.post('/', async (c) => {
 
   if (!parsed.success) {
     return c.json(
-        createResponse(
+      errorResponse(
             400, 
             'Invalid request data', 
             null, 
-            parsed.error.errors.map(e => e.message)
+            parsed.error.issues
         ), 
         400
     );
