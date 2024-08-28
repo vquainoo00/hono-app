@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 // Service function to get all hotels
 
 export const getAllHotels = async (prisma: PrismaClient, cursor: string | null, itemsPerPage: number = 20) => {
-  const data = paginate(prisma, 'hotels', cursor, itemsPerPage);
+  const data = paginate(prisma, 'hotels', 'hotelId', cursor, itemsPerPage);
   return data
 };
 
@@ -17,7 +17,7 @@ export const getHotelById = async (prisma: PrismaClient, hotelId: string)=> {
     let data = await prisma.hotels.findUnique({
 
       where: {
-        id: hotelId,
+        hotelId: hotelId,
       },
     });
     return data ? data : {};
@@ -34,16 +34,42 @@ export const createHotel = async (
   name: string, 
   location: string, 
   shortName: string
-  ): Promise<string> => {
+  ): Promise<Object> => {
   try {
-    const id: string = uuidv4();
+    const hotelId: string = uuidv4();
     const hotel = await prisma.hotels.create({
-      data: { id, name, shortName, location},
+      data: { hotelId, name, shortName, location},
     });
     // Return the hotel id, which is of type string
-    return hotel.id;
+    return hotel;
   } catch (error) {
     console.error('Error creating hotel:', error);
     throw new Error('Failed to create hotel');
+  }
+};
+
+
+export const updateHotel = async (
+  prisma: PrismaClient, 
+  hotelId: string, // Required to identify which hotel to update
+  updateFields: Partial<{ name: string; location: string; shortName: string; [key: string]: any }>
+): Promise<Object> => {
+  try {
+    // Filter out undefined or null values from the updateFields object
+    const updateData = Object.fromEntries(
+      Object.entries(updateFields).filter(([_, value]) => value !== undefined && value !== null)
+    );
+
+    // Perform the update operation using prisma.hotels.update()
+    const hotel = await prisma.hotels.update({
+      where: { hotelId: hotelId }, // Identify the hotel by its ID
+      data: updateData, // Only update the fields that are provided
+    });
+
+    // Return the updated hotel object
+    return hotel;
+  } catch (error) {
+    console.error('Error updating hotel:', error);
+    throw new Error('Failed to update hotel');
   }
 };

@@ -5,6 +5,12 @@ import { z } from 'zod';
 export const RoomSchema = z.object({
   name: z.string().min(1, 'name is required'),
   floor: z.string().min(1, 'floor is required'),
+  hotelId: z.string().min(36, 'hotelId is required'),
 });
 
-export type HotelInput = z.infer<typeof RoomSchema>;
+
+export const RoomCategoriesSchema = z.object({
+  name: z.string().min(1, 'name is required'),
+  hotelId: z.string().min(36, 'hotelId is required'),
+});
+

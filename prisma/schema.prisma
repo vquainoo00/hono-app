@@ -10,17 +10,25 @@ generator client {
 }
 
 model Hotels {
-  id       String @id @default(uuid()) // Using uuid() to generate unique IDs
-  name     String
-  shortName  String
-  location String
-  createdAt DateTime  @default(now())
-  }
-
+  hotelId        String   @id @default(uuid()) // Using uuid() to generate unique IDs
+  name      String
+  shortName String
+  location  String
+  createdAt DateTime @default(now())
+}
 
 model Rooms {
-  id       String @id @default(uuid()) // Using uuid() to generate unique IDs
+  roomId        String   @id @default(uuid()) // Using uuid() to generate unique IDs
+  name      String
+  hotelId   String
+  floor     String
+  createdAt DateTime @default(now())
+}
+
+
+model RoomCategories {
+  roomCategoryId       String @id @default(uuid()) // Using uuid() to generate unique IDs
   name     String
-  floor  String
+  hotelId     String
   createdAt DateTime  @default(now())
   }
