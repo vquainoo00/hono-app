@@ -3,6 +3,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { paginate } from '../utils/pagination';
 
 
+type rooms = {
+  name: string
+  hotelId: string,
+}
+
 // Service function to get all room
 
 export const getAllRooms = async (prisma: PrismaClient, cursor: string | null, itemsPerPage: number = 20) => {
@@ -14,19 +19,17 @@ export const getAllRooms = async (prisma: PrismaClient, cursor: string | null, i
 // Service function to create a new room
 export const createRoom = async (
   prisma: PrismaClient, 
-  name: string, 
-  floor: string, 
-  hotelId: string
+  data: rooms, 
 ): Promise<Object> => {
   try {
     const roomId: string = uuidv4(); // Generating a unique ID for the room
+    const payload = {
+      roomId: roomId,
+      name: data.name,
+      hotelId: data.hotelId,
+    }
     const room = await prisma.rooms.create({
-      data: { 
-        roomId,     
-        name,  
-        floor, 
-        hotelId
-      },
+      data: payload
     });
     
     return room;

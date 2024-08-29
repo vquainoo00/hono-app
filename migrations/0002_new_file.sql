@@ -1,8 +1,10 @@
 -- CreateTable
-CREATE TABLE "Room" (
-    "roomId" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT NOT NULL,
-    "hotelId" TEXT NOT NULL,
+CREATE TABLE "Users" (
+    "email" TEXT NOT NULL PRIMARY KEY,
+    "firstName" TEXT NOT NULL,
+    "LastName" TEXT NOT NULL,
+    "mobile" TEXT NOT NULL,
+    "photoUrl" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

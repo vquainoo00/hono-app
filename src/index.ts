@@ -1,6 +1,8 @@
 import { Hono } from 'hono';
 import { roomRoutes } from './routes/rooms';
 import { hotelRoutes } from './routes/hotels';
+import { userRoutes } from './routes/users';
+
 
 
 
@@ -15,6 +17,8 @@ const app = new Hono<{ Bindings: Bindings }>();
 // Define routes
 app.route('/rooms', roomRoutes);
 app.route('/hotels', hotelRoutes);
+app.route('/users', userRoutes);
+
 
 // Export the app for Cloudflare Workers
 export default {

@@ -3,6 +3,12 @@ import { paginate } from '../utils/pagination';
 
 import { v4 as uuidv4 } from 'uuid';
 
+type hotel = {
+  name : string
+  shortName : string
+  location : string
+}
+
 // Service function to get all hotels
 
 export const getAllHotels = async (prisma: PrismaClient, cursor: string | null, itemsPerPage: number = 20) => {
@@ -31,14 +37,19 @@ export const getHotelById = async (prisma: PrismaClient, hotelId: string)=> {
 // Service function to create a new hotel
 export const createHotel = async (
   prisma: PrismaClient, 
-  name: string, 
-  location: string, 
-  shortName: string
+  data: hotel, 
   ): Promise<Object> => {
   try {
     const hotelId: string = uuidv4();
+
+    const payload = {
+      hotelId: hotelId,
+      name: data.name,
+      shortName: data.shortName,
+      location: data.location
+    }
     const hotel = await prisma.hotels.create({
-      data: { hotelId, name, shortName, location},
+      data: payload,
     });
     // Return the hotel id, which is of type string
     return hotel;

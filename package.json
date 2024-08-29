@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "@prisma/adapter-d1": "^5.18.0",
-    "@prisma/client": "^5.18.0",
+    "@prisma/client": "^5.19.0",
     "@prisma/extension-accelerate": "^1.1.0",
     "drizzle-orm": "^0.33.0",
     "hono": "^4.5.8",

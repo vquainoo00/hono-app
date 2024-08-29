@@ -21,7 +21,6 @@ model Rooms {
   roomId        String   @id @default(uuid()) // Using uuid() to generate unique IDs
   name      String
   hotelId   String
-  floor     String
   createdAt DateTime @default(now())
 }
 
@@ -32,3 +31,12 @@ model RoomCategories {
   hotelId     String
   createdAt DateTime  @default(now())
   }
+
+model Users {
+  email        String   @id
+  firstName      String
+  lastName String
+  mobile  String
+  photoUrl  String
+  createdAt DateTime @default(now())
+}
