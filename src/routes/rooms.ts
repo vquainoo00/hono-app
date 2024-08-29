@@ -41,8 +41,8 @@ roomRoutes.post('/', async (c) => {
     return c.json({ error: parsed.error.errors.map(e => e.message).join(', ') }, 400);
   }
 
-  const { name, floor, hotelId } = parsed.data;  
-  const room = await createRoom(prisma, name, floor, hotelId);
+  const {data} = parsed;  
+  const room = await createRoom(prisma, data);
   return c.json(room);
 });
 

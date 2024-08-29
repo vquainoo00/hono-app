@@ -61,8 +61,8 @@ hotelRoutes.post('/', async (c) => {
     );
 }
 
-  const { name, location, shortName } = parsed.data;  
-  const hotel = await createHotel(prisma, name, location, shortName);
+  const { data } = parsed;  
+  const hotel = await createHotel(prisma, data);
   return c.json(
     createResponse(
         201, 
