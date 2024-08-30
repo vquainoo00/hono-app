@@ -1,86 +1,81 @@
-import { PrismaClient } from '@prisma/client';
 import { paginate } from '../utils/pagination';
-
 import { v4 as uuidv4 } from 'uuid';
 
-type hotel = {
-  name : string
-  shortName : string
-  location : string
+interface Hotel {
+  name: string;
+  shortName: string;
+  location: string;
 }
 
-// Service function to get all hotels
 
-export const getAllHotels = async (prisma: PrismaClient, cursor: string | null, itemsPerPage: number = 20) => {
-  const data = paginate(prisma, 'hotels', 'hotelId', cursor, itemsPerPage);
-  return data
-};
+export default class HotelService {
+  private prisma: any;
 
-// Service function to get hotel by id
-
-export const getHotelById = async (prisma: PrismaClient, hotelId: string)=> {
-  try {
-    let data = await prisma.hotels.findUnique({
-
-      where: {
-        hotelId: hotelId,
-      },
-    });
-    return data ? data : {};
-  } catch (error) {
-    console.error('Error fetching hotel:', error);
-    throw new Error('Failed to retrieve hotel');
+  constructor(prisma: any) {
+    this.prisma = prisma;
   }
-};
 
+  // Method to get all hotels with pagination
+  async getAllHotels(cursor: string | null, itemsPerPage: number = 20) {
+    return await paginate(this.prisma, 'hotels', 'hotelId', cursor, itemsPerPage);
+  }
 
-// Service function to create a new hotel
-export const createHotel = async (
-  prisma: PrismaClient, 
-  data: hotel, 
-  ): Promise<Object> => {
-  try {
-    const hotelId: string = uuidv4();
-
-    const payload = {
-      hotelId: hotelId,
-      name: data.name,
-      shortName: data.shortName,
-      location: data.location
+  // Method to get a hotel by ID
+  async getHotelById(hotelId: string) {
+    try {
+      const data = await this.prisma.hotels.findUnique({
+        where: {
+          hotelId: hotelId,
+        },
+      });
+      return data ? data : {};
+    } catch (error) {
+      console.error('Error fetching hotel:', error);
+      throw new Error('Failed to retrieve hotel');
     }
-    const hotel = await prisma.hotels.create({
-      data: payload,
-    });
-    // Return the hotel id, which is of type string
-    return hotel;
-  } catch (error) {
-    console.error('Error creating hotel:', error);
-    throw new Error('Failed to create hotel');
   }
-};
 
+  // Method to create a new hotel
+  async createHotel(data: Hotel): Promise<Object> {
+    try {
+      const hotelId: string = uuidv4();
 
-export const updateHotel = async (
-  prisma: PrismaClient, 
-  hotelId: string, // Required to identify which hotel to update
-  updateFields: Partial<{ name: string; location: string; shortName: string; [key: string]: any }>
-): Promise<Object> => {
-  try {
-    // Filter out undefined or null values from the updateFields object
-    const updateData = Object.fromEntries(
-      Object.entries(updateFields).filter(([_, value]) => value !== undefined && value !== null)
-    );
+      const payload = {
+        hotelId: hotelId,
+        name: data.name,
+        shortName: data.shortName,
+        location: data.location,
+      };
 
-    // Perform the update operation using prisma.hotels.update()
-    const hotel = await prisma.hotels.update({
-      where: { hotelId: hotelId }, // Identify the hotel by its ID
-      data: updateData, // Only update the fields that are provided
-    });
-
-    // Return the updated hotel object
-    return hotel;
-  } catch (error) {
-    console.error('Error updating hotel:', error);
-    throw new Error('Failed to update hotel');
+      const hotel = await this.prisma.hotels.create({
+        data: payload,
+      });
+      return hotel;
+    } catch (error) {
+      console.error('Error creating hotel:', error);
+      throw new Error('Failed to create hotel');
+    }
   }
-};
+
+  // Method to update an existing hotel
+  async updateHotel(
+    hotelId: string,
+    updateFields: Partial<{ name: string; location: string; shortName: string; [key: string]: any }>
+  ): Promise<Object> {
+    try {
+      const updateData = Object.fromEntries(
+        Object.entries(updateFields).filter(([_, value]) => value !== undefined && value !== null)
+      );
+
+      const hotel = await this.prisma.hotels.update({
+        where: { hotelId: hotelId },
+        data: updateData,
+      });
+
+      return hotel;
+    } catch (error) {
+      console.error('Error updating hotel:', error);
+      throw new Error('Failed to update hotel');
+    }
+  }
+}

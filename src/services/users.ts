@@ -1,8 +1,7 @@
-import { PrismaClient } from '@prisma/client';
 import { paginate } from '../utils/pagination';
 
 
-type user = {
+type Users = {
   email : string
   lastName :string
   firstName :string
@@ -12,37 +11,38 @@ type user = {
 }
 
 // Service function to get all users
+export default class UsersService {
+  private prisma: any
 
-export const getAllUsers = async (prisma: PrismaClient, cursor: string | null, itemsPerPage: number = 20) => {
-  const data = paginate(prisma, 'users', 'email', cursor, itemsPerPage);
-  return data
-};
-
-// Service function to get user by id
-
-export const getUserById = async (prisma: PrismaClient, email: string)=> {
-  try {
-    let data = await prisma.users.findUnique({
-
-      where: {
-        email: email,
-      },
-    });
-    return data ? data : {};
-  } catch (error) {
-    console.error('Error fetching user:', error);
-    throw new Error('Failed to retrieve user');
+  constructor (prisma: any) {
+    this.prisma = this.prisma
   }
-};
+
+  async getAllUsers (cursor: string | null, itemsPerPage: number = 20) {
+    const data = paginate(this.prisma, 'users', 'email', cursor, itemsPerPage);
+    return data
+  };
 
 
+  async getUserById (email: string) {
+    try {
+      let data = await this.prisma.users.findUnique({
+  
+        where: {
+          email: email,
+        },
+      });
+      return data ? data : {};
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      throw new Error('Failed to retrieve user');
+    }
+  };
 
-
-// Service function to create a new user
-export const createUser = async (
-  prisma: PrismaClient, 
-  data: user,
-  ): Promise<Object> => {
+  // Service function to create a new user
+  async createUser  (
+  data: Users,
+  ): Promise<Object> {
   try {
     const payload = {
       email: data.email,
@@ -53,7 +53,7 @@ export const createUser = async (
     }
     console.log("User payload: ", payload)
     
-    const user = await prisma.users.create({data: payload});
+    const user = await this.prisma.users.create({data: payload});
 
     return user;
 
@@ -64,17 +64,16 @@ export const createUser = async (
 };
 
 
-export const updateUser = async (
-  prisma: PrismaClient, 
+  async updateUser(
   email: string,
   updateFields: Partial<{ name: string; location: string; shortName: string; [key: string]: any }>
-): Promise<Object> => {
+): Promise<Object> {
   try {
     const updateData = Object.fromEntries(
       Object.entries(updateFields).filter(([_, value]) => value !== undefined && value !== null)
     );
 
-    const user = await prisma.users.update({
+    const user = await this.prisma.users.update({
       where: { email: email },
       data: updateData, // Only update the fields that are provided
     });
@@ -85,3 +84,10 @@ export const updateUser = async (
     throw new Error('Failed to update user');
   }
 };
+}
+
+
+
+
+
+

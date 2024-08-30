@@ -1,9 +1,9 @@
 import { Hono } from 'hono';
 import { getPrismaClient } from '../prismaClient';
-import { getAllHotels, createHotel, getHotelById, updateHotel } from '../services/hotels';
 import { HotelSchema, UpdateHotelSchema} from '../schemas/hotels';
 import type { Env, AppContext } from '../types';
 import { createResponse, errorResponse} from '../utils/responses';
+import HotelService from '../services/hotels';
 
 
 
@@ -13,16 +13,18 @@ export const hotelRoutes = new Hono<{ Bindings: Env; Variables: AppContext }>();
 hotelRoutes.get('/', async (c) => {
   const prisma = getPrismaClient(c.env);
   const cursor = c.req.query('cursor') || null
-  const itemsPerPage = parseInt(c.req.query('perPage') || '5', 10);
+  const itemsPerPage: number = parseInt(c.req.query('perPage') || '5', 10);
+
+  const hotelService = new HotelService(prisma);
 
 
-  const data = await getAllHotels(prisma, cursor, itemsPerPage);
-
+  const {data, metadata} = await hotelService.getAllHotels(cursor, itemsPerPage);
   return c.json(
     createResponse(
         200, 
         'Hotels retrieved successfully', 
-        data
+        data,
+        metadata
     ), 
     200
 );
@@ -31,7 +33,8 @@ hotelRoutes.get('/', async (c) => {
 // Fetch by Id
 hotelRoutes.get('/:hotelId', async (c) => {
   const prisma = getPrismaClient(c.env);
-  const hotel = await getHotelById(prisma, c.req.param('hotelId'));
+  const hotelService = new HotelService(prisma);
+  const hotel = await hotelService.getHotelById(c.req.param('hotelId'));
   return c.json(
     createResponse(
         200, 
@@ -62,7 +65,10 @@ hotelRoutes.post('/', async (c) => {
 }
 
   const { data } = parsed;  
-  const hotel = await createHotel(prisma, data);
+
+  const hotelService = new HotelService(prisma);
+
+  const hotel = await hotelService.createHotel(data);
   return c.json(
     createResponse(
         201, 
@@ -94,7 +100,9 @@ hotelRoutes.patch('/', async (c) => {
 }
 
   const hotelId = parsed.data.hotelId;  
-  const hotel = await updateHotel(prisma, hotelId, parsed.data);
+  const hotelService = new HotelService(prisma);
+
+  const hotel = await hotelService.updateHotel(hotelId, parsed.data);
   return c.json(
     createResponse(
         201, 

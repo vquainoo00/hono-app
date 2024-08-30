@@ -4,12 +4,13 @@ export interface JsonResponse {
     statusCode: number;
     message: string;
     data?: any;
+    metadata?: {},
     errors?: string[];
 }
 
 
 
-export function createResponse(statusCode: number, message: string, data: any = null, errors: string[] = []): JsonResponse {
+export function createResponse(statusCode: number, message: string, data: any = null, metadata: {} = {}, errors: string[] = []): JsonResponse {
     const response: JsonResponse = {
         statusCode,
         message,
@@ -18,6 +19,8 @@ export function createResponse(statusCode: number, message: string, data: any = 
     if (data) {
         response.data = data;
     }
+
+    response.metadata = metadata;
 
     if (errors.length > 0) {
         response.errors = errors;

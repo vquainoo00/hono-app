@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 import { getPrismaClient } from '../prismaClient';
-import { getAllUsers, createUser, getUserById } from '../services/users';
+import UsersService from '../services/users';
 import { UserSchema} from '../schemas/users';
 import type { Env, AppContext } from '../types';
 import { createResponse, errorResponse} from '../utils/responses';
@@ -15,8 +15,9 @@ userRoutes.get('/', async (c) => {
   const cursor = c.req.query('cursor') || null
   const itemsPerPage = parseInt(c.req.query('perPage') || '5', 10);
 
+  const usersService = new UsersService(prisma)
 
-  const data = await getAllUsers(prisma, cursor, itemsPerPage);
+  const data = await usersService.getAllUsers(cursor, itemsPerPage);
 
   return c.json(
     createResponse(
@@ -31,7 +32,8 @@ userRoutes.get('/', async (c) => {
 // Fetch by Id
 userRoutes.get('/:userId', async (c) => {
   const prisma = getPrismaClient(c.env);
-  const user = await getUserById(prisma, c.req.param('userId'));
+  const usersService = new UsersService(prisma)
+  const user = await usersService.getUserById(c.req.param('userId'));
   return c.json(
     createResponse(
         200, 
@@ -62,11 +64,10 @@ userRoutes.post('/', async (c) => {
 }
 
   const {data} = parsed;
+  const usersService = new UsersService(prisma)
 
 
-  const user = await createUser(
-    prisma, data
-    );
+  const user = await usersService.createUser(data);
   return c.json(
     createResponse(
         201, 

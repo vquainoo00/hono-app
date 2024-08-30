@@ -4,8 +4,11 @@ import { PrismaClient } from '@prisma/client';
 
 interface PaginationResult<T> {
   data: T[];
-  hasNextPage: boolean;
-  nextCursor: string | null;
+  metadata: {
+    hasNextPage: boolean;
+    nextCursor: string | null;
+  }
+  
 }
 
 export async function paginate<T>(
@@ -19,7 +22,7 @@ export async function paginate<T>(
 
   const query: any = {
     take,
-    orderBy: { [orderKey]: 'asc' },
+    orderBy: { [orderKey]: 'desc' },
   };
 
   if (cursor) {
@@ -35,8 +38,6 @@ export async function paginate<T>(
   const nextCursor = hasNextPage ? resultData[resultData.length - 1][orderKey] : null;
 
   return {
-    data: resultData,
-    hasNextPage,
-    nextCursor,
+    data: resultData, metadata: {hasNextPage: hasNextPage, nextCursor: nextCursor}
   };
 }
