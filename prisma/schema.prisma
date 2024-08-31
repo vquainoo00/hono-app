@@ -17,6 +17,20 @@ model Hotels {
   createdAt DateTime @default(now())
 }
 
+model Branches {
+  branchId    String    @id @default(uuid())
+  branchName       String
+  hotelId     String
+  address     String
+  city     String
+  state     String
+  country String
+  phoneNumber String
+  email String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 model Rooms {
   roomId        String   @id @default(uuid()) // Using uuid() to generate unique IDs
   name      String
@@ -39,4 +53,20 @@ model Users {
   mobile  String
   photoUrl  String
   createdAt DateTime @default(now())
+}
+
+model Bookings {
+  bookingId    String    @id @default(uuid())
+  branchId     String
+  roomId       String
+  staffId      String
+  guestContact String
+  guestName    String
+  checkInDate  DateTime
+  checkOutDate DateTime
+  currency     String
+  price        Float
+  status       String   @default("PENDING") // Use a string instead of an enum
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

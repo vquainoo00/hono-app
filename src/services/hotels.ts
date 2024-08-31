@@ -7,6 +7,12 @@ interface Hotel {
   location: string;
 }
 
+interface UpdateHotelFields {
+  name?: string;
+  shortName?: string;
+  location?: string;
+  [key: string]: any;
+}
 
 export default class HotelService {
   private prisma: any;
@@ -15,12 +21,10 @@ export default class HotelService {
     this.prisma = prisma;
   }
 
-  // Method to get all hotels with pagination
   async getAllHotels(cursor: string | null, itemsPerPage: number = 20) {
     return await paginate(this.prisma, 'hotels', 'hotelId', cursor, itemsPerPage);
   }
 
-  // Method to get a hotel by ID
   async getHotelById(hotelId: string) {
     try {
       const data = await this.prisma.hotels.findUnique({
@@ -35,7 +39,6 @@ export default class HotelService {
     }
   }
 
-  // Method to create a new hotel
   async createHotel(data: Hotel): Promise<Object> {
     try {
       const hotelId: string = uuidv4();
@@ -58,10 +61,7 @@ export default class HotelService {
   }
 
   // Method to update an existing hotel
-  async updateHotel(
-    hotelId: string,
-    updateFields: Partial<{ name: string; location: string; shortName: string; [key: string]: any }>
-  ): Promise<Object> {
+  async updateHotel(hotelId: string, updateFields: UpdateHotelFields) {
     try {
       const updateData = Object.fromEntries(
         Object.entries(updateFields).filter(([_, value]) => value !== undefined && value !== null)
