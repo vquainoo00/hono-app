@@ -16,7 +16,8 @@ export async function paginate<T>(
   model: keyof PrismaClient,
   orderKey: string,
   cursor: string | null,
-  itemsPerPage: number = 20
+  itemsPerPage: number = 20,
+  filters?: object
 ): Promise<PaginationResult<T>> {
   const take = itemsPerPage + 1; // Fetch one extra item to check if there's a next page
 
@@ -31,7 +32,14 @@ export async function paginate<T>(
   }
 
   // Fetch data from the specified model
-  const data = await (prisma[model] as any).findMany(query);
+  let data: any[];
+
+  if (filters) {
+    data = await (prisma[model] as any).findMany({where: {filters}});
+  }
+  else {
+    data = await (prisma[model] as any).findMany(query);
+  }
 
   const hasNextPage = data.length > itemsPerPage;
   const resultData = hasNextPage ? data.slice(0, -1) : data; // Remove the extra item if next page exists

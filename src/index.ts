@@ -3,6 +3,8 @@ import { roomRoutes } from './routes/rooms';
 import { hotelRoutes } from './routes/hotels';
 import { userRoutes } from './routes/users';
 import { branchesRoutes } from './routes/branches';
+import { bookingsRoutes } from './routes/bookings';
+
 
 
 
@@ -21,9 +23,10 @@ app.route('/rooms', roomRoutes);
 app.route('/hotels', hotelRoutes);
 app.route('/users', userRoutes);
 app.route('/branches', branchesRoutes);
+app.route('/bookings', bookingsRoutes);
 
 
-// Export the app for Cloudflare Workers
+
 export default {
   fetch: app.fetch.bind(app)
 };

@@ -66,7 +66,7 @@ model Bookings {
   checkOutDate DateTime
   currency     String
   price        Float
-  status       String   @default("PENDING") // Use a string instead of an enum
+  status       String   @default("PENDING") 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }

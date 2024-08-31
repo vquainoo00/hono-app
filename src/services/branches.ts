@@ -43,10 +43,7 @@ export default class BranchService {
 
       }
 
-      const branch = await this.prisma.branches.create({
-        data: payload,
-      });
-      return branch;
+      return await this.prisma.branches.create({data: payload});
     } catch (error) {
       console.error('Error creating branch:', error);
       throw new Error('Failed to create branch');

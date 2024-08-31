@@ -1,61 +1,55 @@
-// import { paginate } from '../utils/pagination';
-// import { v4 as uuidv4 } from 'uuid';
-
-// interface Booking {
-//   name: string;
-//   shortName: string;
-//   location: string;
-// }
-
-// export default class BookingService {
-//   private prisma: any;
-
-//   constructor(prisma: any) {
-//     this.prisma = prisma;
-//   }
-
-//   async getAllBookings(cursor: string | null, itemsPerPage: number = 20) {
-//     return await paginate(this.prisma, 'hotels', 'hotelId', cursor, itemsPerPage);
-//   }
+import { paginate } from '../utils/pagination';
+import { v4 as uuidv4 } from 'uuid';
 
 
-//   async createBooking(data: Booking): Promise<Object> {
-//     try {
-//       const bookingId: string = uuidv4();
 
-//       const payload = {
-//         hotelId: hotelId,
-//         name: data.name,
-//         shortName: data.shortName,
-//         location: data.location,
-//       };
+enum Statuses {
+    pending, active, canceled, completed
+}
 
-//       const hotel = await this.prisma.hotels.create({
-//         data: payload,
-//       });
-//       return hotel;
-//     } catch (error) {
-//       console.error('Error creating hotel:', error);
-//       throw new Error('Failed to create hotel');
-//     }
-//   }
 
-//   // Method to update an existing hotel
-//   async updateHotel(hotelId: string, updateFields: UpdateHotelFields) {
-//     try {
-//       const updateData = Object.fromEntries(
-//         Object.entries(updateFields).filter(([_, value]) => value !== undefined && value !== null)
-//       );
+interface Bookings {
+    bookingId: string,
+    branchId: string,
+    roomId: string,
+    staffId: string,
+    guessContact: string,
+    guestName: string,
+    checkInDate: string,
+    checkoutDate: string,
+    currency: string,
+    price: number,
+    status: Statuses
+}
 
-//       const hotel = await this.prisma.hotels.update({
-//         where: { hotelId: hotelId },
-//         data: updateData,
-//       });
+export default class BookingsService {
 
-//       return hotel;
-//     } catch (error) {
-//       console.error('Error updating hotel:', error);
-//       throw new Error('Failed to update hotel');
-//     }
-//   }
-// }
+    prisma: any
+
+    constructor(prisma: any){
+        this.prisma = prisma
+    }
+
+    async createBooking(data: any): Promise<Bookings>{
+        try {
+        const bookingId: string = uuidv4()
+        const payload = {
+            bookingId: bookingId,
+            ...data,
+    
+          }
+        
+        return await this.prisma.bookings.create({data: payload});
+        }
+        catch(error) {
+            console.log("Error making booking: ", error)
+            throw new Error('Failed to create booking');
+        }
+
+    }
+
+    async getBookings(cursor: string | null, itemsPerPage: number | 20, queryFilters?: any) {
+        return await paginate(this.prisma, 'bookings', 'bookingId', cursor, itemsPerPage);
+
+    }
+}
