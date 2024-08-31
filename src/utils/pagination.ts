@@ -38,6 +38,7 @@ export async function paginate<T>(
     data = await (prisma[model] as any).findMany({where: {filters}});
   }
   else {
+
     data = await (prisma[model] as any).findMany(query);
   }
 

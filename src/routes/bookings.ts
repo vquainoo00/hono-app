@@ -32,7 +32,7 @@ bookingsRoutes.get('/', async (c) => {
 });
 
 
-// Create a new branch
+// Create a new booking
 bookingsRoutes.post('/', async (c) => {
 
   const prisma = getPrismaClient(c.env);
