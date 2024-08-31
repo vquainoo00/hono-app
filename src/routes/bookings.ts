@@ -1,52 +1,30 @@
 import { Hono } from 'hono';
-import { getPrismaClient } from '../prismaClient';
 import type { Env, AppContext } from '../types';
-import { createResponse} from '../utils/responses';
-import BookingsService from '../services/bookings';
+import { getPrismaClient } from '../prismaClient';
+import BookingsController from '../controllers/bookings';
 
+type HotelContext = AppContext & {
+  bookingsController: BookingsController;
+};
 
+export const bookingsRoutes = new Hono<{ Bindings: Env; Variables: HotelContext }>();
 
-export const bookingsRoutes = new Hono<{ Bindings: Env; Variables: AppContext }>();
+// Middleware to initialize Prisma client and HotelsController
+bookingsRoutes.use('*', async (c, next) => {
+  const prisma = getPrismaClient(c.env);
+  const bookingsController = new BookingsController(prisma);
+  
+  c.set('bookingsController', bookingsController);
+  
+  await next();
+});
 
-// Fetch all bookings with filters
 bookingsRoutes.get('/', async (c) => {
-  const prisma = getPrismaClient(c.env);
-  const queryFilters = c.req.query()
-  const cursor = c.req.query('cursor') || null
-  const itemsPerPage: number = parseInt(c.req.query('perPage') || '5', 10);
-
-  const bookingsService = new BookingsService(prisma);
-
-
-  const data = await bookingsService.getBookings(cursor, itemsPerPage, queryFilters);
-
-  return c.json(
-    createResponse(
-        200, 
-        'Bookings retrieved successfully', 
-        data,
-        []
-    ), 
-    200
-);
+  const bookingsController = c.get('bookingsController'); 
+  return bookingsController.getBookings(c);
 });
 
-
-// Create a new booking
 bookingsRoutes.post('/', async (c) => {
-
-  const prisma = getPrismaClient(c.env);
-  const body = await c.req.json();
-  const bookingsService = new BookingsService(prisma)
-
-  const booking = await bookingsService.createBooking(body);
-  return c.json(
-    createResponse(
-        201, 
-        'Booking created successfully', 
-        booking,
-    ), 
-    201
-);
+  const bookingsController = c.get('bookingsController');
+  return bookingsController.createBooking(c);
 });
-

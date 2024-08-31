@@ -4,11 +4,11 @@ import { createResponse, errorResponse } from '../utils/responses';
 import { ZodError } from 'zod';
 
 interface HotelRequest {
-  body: unknown;
+  body: any;
   req: {
-    query: (name: string) => string | undefined;
-    param: (name: string) => string | undefined;
-    json: () => Promise<unknown>;
+    query: (name: string) => string | any;
+    param: (name: string) => string | any;
+    json: () => Promise<any>;
   };
   json: (response: object, status?: number) => Response;
 }
