@@ -1,10 +1,14 @@
 import { paginate } from '../utils/pagination';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
+
 
 interface Hotel {
   name: string;
-  shortName: string;
-  location: string;
+  description?: string;
+  headOfficeLocation?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+
 }
 
 interface UpdateHotelFields {
@@ -39,15 +43,18 @@ export default class HotelService {
     }
   }
 
+
   async createHotel(data: Hotel): Promise<Object> {
     try {
-      const hotelId: string = uuidv4();
+      const hotelId: string = uuidv7();
 
       const payload = {
         hotelId: hotelId,
         name: data.name,
-        shortName: data.shortName,
-        location: data.location,
+        description: data.description,
+        headOfficeLocation: data.headOfficeLocation,
+        contactPhone: data.contactPhone,
+        contactEmail: data.contactEmail
       };
 
       const hotel = await this.prisma.hotels.create({

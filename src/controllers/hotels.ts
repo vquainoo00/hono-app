@@ -66,12 +66,13 @@ export default class HotelsController {
   async updateHotel(request: HotelRequest) {
     const body = await request.req.json();
     const result = UpdateHotelSchema.safeParse(body);
+    const hotelId = request.req.param("hotelId");
 
     if (!result.success) {
       return this.handleValidationError(result.error, request);
     }
 
-    const { hotelId, ...updateData } = result.data;
+    const {...updateData } = result.data;
     const hotelService = new HotelService(this.prisma);
 
     try {

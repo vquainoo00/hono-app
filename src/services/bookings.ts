@@ -1,5 +1,5 @@
 import { paginate } from '../utils/pagination';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 
 
 
@@ -32,7 +32,7 @@ export default class BookingsService {
 
     async createBooking(data: any): Promise<Bookings>{
         try {
-        const bookingId: string = uuidv4()
+        const bookingId: string = uuidv7()
         const payload = {
             bookingId: bookingId,
             ...data,

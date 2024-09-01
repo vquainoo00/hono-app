@@ -1,5 +1,4 @@
-import { paginate } from '../utils/pagination';
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 
 
 interface Branches {
@@ -36,7 +35,7 @@ export default class BranchService {
 
   async createBranch(data: any): Promise<Branches>{
     try {
-      const branchId: string = uuidv4();
+      const branchId: string = uuidv7();
       const payload = {
         branchId: branchId,
         ...data,

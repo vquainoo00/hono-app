@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v7 as uuidv7 } from 'uuid';
 import { paginate } from '../utils/pagination';
 
 
@@ -25,7 +25,7 @@ export default class RoomService {
     data: Rooms, 
   ): Promise<Object> {
     try {
-      const roomId: string = uuidv4(); // Generating a unique ID for the room
+      const roomId: string = uuidv7(); // Generating a unique ID for the room
       const payload = {
         roomId: roomId,
         name: data.name,
@@ -63,7 +63,7 @@ export default class RoomService {
     hotelId: string
   ): Promise<Object> {
     try {
-      const roomCategoryId: string = uuidv4(); // Generating a unique ID for the room
+      const roomCategoryId: string = uuidv7(); // Generating a unique ID for the room
       const room = await this.prisma.roomCategories.create({
         data: { 
           roomCategoryId,     

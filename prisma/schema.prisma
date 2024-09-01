@@ -12,8 +12,10 @@ generator client {
 model Hotels {
   hotelId        String   @id @default(uuid()) // Using uuid() to generate unique IDs
   name      String
-  shortName String
-  location  String
+  description String?
+  headOfficeLocation String?
+  contactPhone String?
+  contactEmail String?
   createdAt DateTime @default(now())
 }
 
