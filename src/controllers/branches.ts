@@ -1,16 +1,8 @@
 import BranchesService from '../services/branches';
 import { BranchesSchema } from '../schemas/branches';
-import { createResponse, handleValidationError, handleServiceError} from '../utils/responses';
+import type { Request } from '../types';
 
-interface BranchesRequest {
-  body: any;
-  req: {
-    query: (name: string) => string | any;
-    param: (name: string) => string | any;
-    json: () => Promise<any>;
-  };
-  json: (response: object, status?: number) => Response;
-}
+import { createResponse, handleValidationError, handleServiceError} from '../utils/responses';
 
 export default class BranchesController {
   private prisma: any;
@@ -19,7 +11,7 @@ export default class BranchesController {
     this.prisma = prisma;
   }
 
-  async createBranch(request: BranchesRequest) {
+  async createBranch(request: Request) {
     const result = BranchesSchema.safeParse(await request.req.json());
     if (!result.success) {
       return handleValidationError(result.error, request);
@@ -34,7 +26,7 @@ export default class BranchesController {
     }
   }
 
-  async getBranches(request: BranchesRequest) {
+  async getBranches(request: Request) {
     const branchesService = new BranchesService(this.prisma);
     const hotelId = request.req.query('hotelId')
 

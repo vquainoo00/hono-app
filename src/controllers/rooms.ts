@@ -1,16 +1,8 @@
 import RoomsServices from '../services/rooms';
+import type { Request } from '../types';
 import { RoomSchema, RoomCategoriesSchema } from '../schemas/rooms';
 import { createResponse, handleServiceError, handleValidationError } from '../utils/responses';
 
-interface RoomsRequest {
-  body: any;
-  req: {
-    query: (name: string) => string | any;
-    param: (name: string) => string | any;
-    json: () => Promise<any>;
-  };
-  json: (response: object, status?: number) => Response;
-}
 
 export default class RoomsController {
   private prisma: any;
@@ -19,7 +11,7 @@ export default class RoomsController {
     this.prisma = prisma;
   }
 
-  async creatRoom(request: RoomsRequest) {
+  async creatRoom(request: Request) {
     const result = RoomSchema.safeParse(await request.req.json());
     if (!result.success) {
       return handleValidationError(result.error, request);
@@ -34,7 +26,7 @@ export default class RoomsController {
     }
   }
 
-  async getRooms(request: RoomsRequest) {
+  async getRooms(request: Request) {
     const cursor = request.req.query('cursor') || null;
     const itemsPerPage = parseInt(request.req.query('perPage') || '5', 10);
     const roomService = new RoomsServices(this.prisma);
@@ -47,7 +39,7 @@ export default class RoomsController {
     }
   }
 
-  async creatRoomCategory(request: RoomsRequest) {
+  async creatRoomCategory(request: Request) {
     const result = RoomCategoriesSchema.safeParse(await request.req.json());
     if (!result.success) {
       return handleValidationError(result.error, request);
@@ -63,7 +55,7 @@ export default class RoomsController {
     }
   }
 
-  async getRoomCategories(request: RoomsRequest) {
+  async getRoomCategories(request: Request) {
     const roomService = new RoomsServices(this.prisma);
     const hotelId = request.req.param("hotelId")
 
