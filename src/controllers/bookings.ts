@@ -1,15 +1,6 @@
 import BookingsService from '../services/bookings';
-import { createResponse, handleServiceError, handleValidationError} from '../utils/responses';
-
-interface BookingsRequest {
-  body: any;
-  req: {
-    query: (name: string) => string | any;
-    param: (name: string) => string | any;
-    json: () => Promise<any>;
-  };
-  json: (response: object, status?: number) => Response;
-}
+import type { Request } from '../types';
+import { createResponse, handleServiceError} from '../utils/responses';
 
 export default class BookingsController {
   private prisma: any;
@@ -18,7 +9,7 @@ export default class BookingsController {
     this.prisma = prisma;
   }
 
-  async createBooking(request: BookingsRequest) {
+  async createBooking(request: Request) {
 
     const bookingsService = new BookingsService(this.prisma);
     try {
@@ -29,9 +20,8 @@ export default class BookingsController {
     }
   }
 
-  async getBookings(request: BookingsRequest) {
+  async getBookings(request: Request) {
     const bookingsService = new BookingsService(this.prisma);
-    const hotelId = request.req.param('hotelId')
 
     const cursor = request.req.query('cursor') || null;
     const itemsPerPage = parseInt(request.req.query('perPage') || '5', 10);
