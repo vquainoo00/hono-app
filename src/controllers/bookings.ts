@@ -1,6 +1,5 @@
 import BookingsService from '../services/bookings';
-import { createResponse, errorResponse } from '../utils/responses';
-import { ZodError } from 'zod';
+import { createResponse, handleServiceError, handleValidationError} from '../utils/responses';
 
 interface BookingsRequest {
   body: any;
@@ -26,7 +25,7 @@ export default class BookingsController {
       const room = await bookingsService.createBooking(request.body);
       return request.json(createResponse(201, 'Booking created successfully', room), 201);
     } catch (error) {
-      return this.handleServiceError(error, request);
+      return handleServiceError(error, request);
     }
   }
 
@@ -42,16 +41,7 @@ export default class BookingsController {
       const { data, metadata } = await bookingsService.getBookings(cursor, itemsPerPage, queryFilters);
       return request.json(createResponse(200, 'Branches retrieved successfully', data, metadata), 200);
     } catch (error) {
-      return this.handleServiceError(error, request);
+      return handleServiceError(error, request);
     }
-  }
-
-
-  private handleServiceError(error: unknown, request: BookingsRequest) {
-    console.error('Service error:', error);
-    return request.json(
-      errorResponse(500, 'Internal server error'),
-      500
-    );
   }
 }

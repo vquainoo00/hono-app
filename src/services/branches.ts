@@ -58,7 +58,7 @@ export default class BranchService {
           hotelId: hotelId,
         },
       });
-      return data ? data : {};
+      return data ? data : [];
     } catch (error) {
       console.error('Error fetching branches for hotel:', error);
     }

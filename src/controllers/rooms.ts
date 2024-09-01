@@ -1,7 +1,6 @@
 import RoomsServices from '../services/rooms';
 import { RoomSchema, RoomCategoriesSchema } from '../schemas/rooms';
-import { createResponse, errorResponse } from '../utils/responses';
-import { ZodError } from 'zod';
+import { createResponse, handleServiceError, handleValidationError } from '../utils/responses';
 
 interface RoomsRequest {
   body: any;
@@ -23,7 +22,7 @@ export default class RoomsController {
   async creatRoom(request: RoomsRequest) {
     const result = RoomSchema.safeParse(await request.req.json());
     if (!result.success) {
-      return this.handleValidationError(result.error, request);
+      return handleValidationError(result.error, request);
     }
 
     const roomService = new RoomsServices(this.prisma);
@@ -31,7 +30,7 @@ export default class RoomsController {
       const room = await roomService.createRoom(result.data);
       return request.json(createResponse(201, 'Room created successfully', room), 201);
     } catch (error) {
-      return this.handleServiceError(error, request);
+      return handleServiceError(error, request);
     }
   }
 
@@ -44,14 +43,14 @@ export default class RoomsController {
       const { data, metadata } = await roomService.getAllRooms(cursor, itemsPerPage);
       return request.json(createResponse(200, 'Rooms retrieved successfully', data, metadata), 200);
     } catch (error) {
-      return this.handleServiceError(error, request);
+      return handleServiceError(error, request);
     }
   }
 
   async creatRoomCategory(request: RoomsRequest) {
     const result = RoomCategoriesSchema.safeParse(await request.req.json());
     if (!result.success) {
-      return this.handleValidationError(result.error, request);
+      return handleValidationError(result.error, request);
     }
     const {hotelId, name} = result.data;
 
@@ -60,7 +59,7 @@ export default class RoomsController {
       const room = await roomService.createRoomCategory(name, hotelId);
       return request.json(createResponse(201, 'Room category created successfully', room), 201);
     } catch (error) {
-      return this.handleServiceError(error, request);
+      return handleServiceError(error, request);
     }
   }
 
@@ -72,22 +71,7 @@ export default class RoomsController {
       const { data, metadata } = await roomService.getAllRoomCategories(hotelId);
       return request.json(createResponse(200, 'RoomCategories retrieved successfully', data, metadata), 200);
     } catch (error) {
-      return this.handleServiceError(error, request);
+      return handleServiceError(error, request);
     }
-  }
-
-  private handleValidationError(error: ZodError, request: RoomsRequest) {
-    return request.json(
-      errorResponse(400, 'Invalid request data', null, error.issues),
-      400
-    );
-  }
-
-  private handleServiceError(error: unknown, request: RoomsRequest) {
-    console.error('Service error:', error);
-    return request.json(
-      errorResponse(500, 'Internal server error'),
-      500
-    );
   }
 }
