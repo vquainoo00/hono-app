@@ -1,7 +1,6 @@
 import HotelService from '../services/hotels';
 import { HotelSchema, UpdateHotelSchema } from '../schemas/hotels';
-import { createResponse, errorResponse } from '../utils/responses';
-import { ZodError } from 'zod';
+import { createResponse, errorResponse, handleServiceError, handleValidationError } from '../utils/responses';
 
 interface HotelRequest {
   body: any;
@@ -23,7 +22,7 @@ export default class HotelsController {
   async createHotel(request: HotelRequest) {
     const result = HotelSchema.safeParse(await request.req.json());
     if (!result.success) {
-      return this.handleValidationError(result.error, request);
+      return handleValidationError(result.error, request);
     }
 
     const hotelService = new HotelService(this.prisma);
@@ -31,7 +30,7 @@ export default class HotelsController {
       const hotel = await hotelService.createHotel(result.data);
       return request.json(createResponse(201, 'Hotel created successfully', hotel), 201);
     } catch (error) {
-      return this.handleServiceError(error, request);
+      return handleServiceError(error, request);
     }
   }
 
@@ -44,7 +43,7 @@ export default class HotelsController {
       const { data, metadata } = await hotelService.getAllHotels(cursor, itemsPerPage);
       return request.json(createResponse(200, 'Hotels retrieved successfully', data, metadata), 200);
     } catch (error) {
-      return this.handleServiceError(error, request);
+      return handleServiceError(error, request);
     }
   }
 
@@ -59,7 +58,7 @@ export default class HotelsController {
       const hotel = await hotelService.getHotelById(hotelId);
       return request.json(createResponse(200, 'Hotel retrieved successfully', hotel), 200);
     } catch (error) {
-      return this.handleServiceError(error, request);
+      return handleServiceError(error, request);
     }
   }
 
@@ -69,7 +68,7 @@ export default class HotelsController {
     const hotelId = request.req.param("hotelId");
 
     if (!result.success) {
-      return this.handleValidationError(result.error, request);
+      return handleValidationError(result.error, request);
     }
 
     const {...updateData } = result.data;
@@ -79,22 +78,7 @@ export default class HotelsController {
       const hotel = await hotelService.updateHotel(hotelId, updateData);
       return request.json(createResponse(200, 'Hotel updated successfully', hotel), 200);
     } catch (error) {
-      return this.handleServiceError(error, request);
+      return handleServiceError(error, request);
     }
-  }
-
-  private handleValidationError(error: ZodError, request: HotelRequest) {
-    return request.json(
-      errorResponse(400, 'Invalid request data', null, error.issues),
-      400
-    );
-  }
-
-  private handleServiceError(error: unknown, request: HotelRequest) {
-    console.error('Service error:', error);
-    return request.json(
-      errorResponse(500, 'Internal server error'),
-      500
-    );
   }
 }
