@@ -1,5 +1,6 @@
 import HotelService from '../services/hotels';
 import { HotelSchema, UpdateHotelSchema } from '../schemas/hotels';
+import type { Request } from '../types';
 import { createResponse, errorResponse, handleServiceError, handleValidationError } from '../utils/responses';
 
 interface HotelRequest {
@@ -19,7 +20,7 @@ export default class HotelsController {
     this.prisma = prisma;
   }
 
-  async createHotel(request: HotelRequest) {
+  async createHotel(request: Request) {
     const result = HotelSchema.safeParse(await request.req.json());
     if (!result.success) {
       return handleValidationError(result.error, request);
@@ -34,7 +35,7 @@ export default class HotelsController {
     }
   }
 
-  async getHotels(request: HotelRequest) {
+  async getHotels(request: Request) {
     const cursor = request.req.query('cursor') || null;
     const itemsPerPage = parseInt(request.req.query('perPage') || '5', 10);
     const hotelService = new HotelService(this.prisma);
@@ -47,7 +48,7 @@ export default class HotelsController {
     }
   }
 
-  async getHotelById(request: HotelRequest) {
+  async getHotelById(request: Request) {
     const hotelId = request.req.param('hotelId');
     if (!hotelId) {
       return request.json(errorResponse(400, 'Hotel ID is required'), 400);
@@ -62,7 +63,7 @@ export default class HotelsController {
     }
   }
 
-  async updateHotel(request: HotelRequest) {
+  async updateHotel(request: Request) {
     const body = await request.req.json();
     const result = UpdateHotelSchema.safeParse(body);
     const hotelId = request.req.param("hotelId");
