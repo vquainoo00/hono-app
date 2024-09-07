@@ -7,12 +7,9 @@ import { bookingsRoutes } from './routes/bookings';
 
 
 
-
-
-
-// Define the types for Cloudflare environment bindings
 type Bindings = {
   DB: D1Database;
+  hms: KVNamespace
 };
 
 // Initialize Hono app with Cloudflare environment bindings

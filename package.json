@@ -5,6 +5,8 @@
     "deploy": "wrangler deploy --minify src/index.ts"
   },
   "dependencies": {
+    "@hono/swagger-ui": "^0.4.1",
+    "@hono/zod-openapi": "^0.16.0",
     "@prisma/adapter-d1": "^5.18.0",
     "@prisma/client": "^5.19.0",
     "@prisma/extension-accelerate": "^1.1.0",

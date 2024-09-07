@@ -8,3 +8,8 @@ compatibility_date = "2024-08-22"
 binding = "DB"
 database_name = "hms"
 database_id = "1f454f7e-5e4e-4e5f-8715-aa06574b8aad"
+
+
+[[kv_namespaces]]
+binding = "hms"
+id = "1ef30deea90e48e891fe1ce915e4d8cb"

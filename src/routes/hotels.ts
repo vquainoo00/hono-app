@@ -26,7 +26,8 @@ hotelRoutes.get('/', async (c) => {
 
 hotelRoutes.get('/:hotelId', async (c) => {
   const hotelController = c.get('hotelController');
-  return hotelController.getHotelById(c);
+  const response = await hotelController.getHotelById(c, c.env);
+  return response
 });
 
 hotelRoutes.post('/', async (c) => {

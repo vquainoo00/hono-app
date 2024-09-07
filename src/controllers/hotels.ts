@@ -3,15 +3,6 @@ import { HotelSchema, UpdateHotelSchema } from '../schemas/hotels';
 import type { Request } from '../types';
 import { createResponse, errorResponse, handleServiceError, handleValidationError } from '../utils/responses';
 
-interface HotelRequest {
-  body: any;
-  req: {
-    query: (name: string) => string | any;
-    param: (name: string) => string | any;
-    json: () => Promise<any>;
-  };
-  json: (response: object, status?: number) => Response;
-}
 
 export default class HotelsController {
   private prisma: any;
@@ -36,6 +27,7 @@ export default class HotelsController {
   }
 
   async getHotels(request: Request) {
+    
     const cursor = request.req.query('cursor') || null;
     const itemsPerPage = parseInt(request.req.query('perPage') || '5', 10);
     const hotelService = new HotelService(this.prisma);
@@ -48,20 +40,32 @@ export default class HotelsController {
     }
   }
 
-  async getHotelById(request: Request) {
-    const hotelId = request.req.param('hotelId');
-    if (!hotelId) {
-      return request.json(errorResponse(400, 'Hotel ID is required'), 400);
-    }
-
-    const hotelService = new HotelService(this.prisma);
+  async getHotelById(request: Request, env: any) {
     try {
+      const hotelId = request.req.param('hotelId');
+  
+      // Check cache first
+      const cachedHotel = await env.hms.get(hotelId, "json");
+      if (cachedHotel) {
+        return request.json(createResponse(200, 'Hotel retrieved successfully', cachedHotel));  // Return proper JSON response
+      }
+    
+      // If not found in cache, retrieve from DB
+      const hotelService = new HotelService(this.prisma);
       const hotel = await hotelService.getHotelById(hotelId);
-      return request.json(createResponse(200, 'Hotel retrieved successfully', hotel), 200);
+  
+      // Cache the retrieved hotel
+      await env.hms.put(hotelId, JSON.stringify(hotel));
+  
+      return request.json(createResponse(200, 'Hotel retrieved successfully', hotel));  // Return proper JSON response
+      
     } catch (error) {
+      console.error("Error retrieving hotel: ", error);
       return handleServiceError(error, request);
     }
   }
+  
+  
 
   async updateHotel(request: Request) {
     const body = await request.req.json();
