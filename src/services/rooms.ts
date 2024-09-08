@@ -60,7 +60,9 @@ export default class RoomService {
   // Service function to create a new room
   async createRoomCategory (
     name: string, 
-    hotelId: string
+    hotelId: string,
+    price: number,
+    currency: string
   ): Promise<Object> {
     try {
       const roomCategoryId: string = uuidv7(); // Generating a unique ID for the room
@@ -68,7 +70,9 @@ export default class RoomService {
         data: { 
           roomCategoryId,     
           name,  
-          hotelId
+          hotelId,
+          price,
+          currency
         },
       });
       

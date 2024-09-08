@@ -44,6 +44,8 @@ model Rooms {
 model RoomCategories {
   roomCategoryId       String @id @default(uuid()) // Using uuid() to generate unique IDs
   name     String
+  currency     String?
+  price    Float?
   hotelId     String
   createdAt DateTime  @default(now())
   }
