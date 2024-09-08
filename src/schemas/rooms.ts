@@ -11,6 +11,8 @@ export const RoomSchema = z.object({
 
 export const RoomCategoriesSchema = z.object({
   name: z.string().min(1, 'name is required'),
+  price: z.number(),
+  currency: z.string().min(1, 'name is required'),
   hotelId: z.string().min(36, 'hotelId is required'),
 });
 

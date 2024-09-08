@@ -39,16 +39,16 @@ export default class RoomsController {
     }
   }
 
-  async creatRoomCategory(request: Request) {
+  async createRoomCategory(request: Request) {
     const result = RoomCategoriesSchema.safeParse(await request.req.json());
     if (!result.success) {
       return handleValidationError(result.error, request);
     }
-    const {hotelId, name} = result.data;
+    const {hotelId, name, price, currency} = result.data;
 
     const roomService = new RoomsServices(this.prisma);
     try {
-      const room = await roomService.createRoomCategory(name, hotelId);
+      const room = await roomService.createRoomCategory(name, hotelId, price, currency);
       return request.json(createResponse(201, 'Room category created successfully', room), 201);
     } catch (error) {
       return handleServiceError(error, request);
@@ -57,11 +57,11 @@ export default class RoomsController {
 
   async getRoomCategories(request: Request) {
     const roomService = new RoomsServices(this.prisma);
-    const hotelId = request.req.param("hotelId")
+    const hotelId = request.req.query("hotelId")
 
     try {
-      const { data, metadata } = await roomService.getAllRoomCategories(hotelId);
-      return request.json(createResponse(200, 'RoomCategories retrieved successfully', data, metadata), 200);
+      const data = await roomService.getAllRoomCategories(hotelId);
+      return request.json(createResponse(200, 'RoomCategories retrieved successfully', data, {}), 200);
     } catch (error) {
       return handleServiceError(error, request);
     }

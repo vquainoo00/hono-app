@@ -36,5 +36,5 @@ roomRoutes.get('/categories', async (c) => {
 
 roomRoutes.post('/categories', async (c) => {
   const roomController = c.get('roomController');
-  return roomController.creatRoomCategory(c);
+  return roomController.createRoomCategory(c);
 });

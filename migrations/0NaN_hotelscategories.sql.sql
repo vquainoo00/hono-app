@@ -1,0 +1,1 @@
+-- Migration number: 0NaN 	 2024-09-08T12:35:54.708Z
