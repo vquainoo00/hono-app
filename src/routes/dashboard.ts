@@ -19,7 +19,7 @@ dashboardRoutes.use('*', async (c, next) => {
   await next();
 });
 
-dashboardRoutes.get('/stats/:hotelId', async (c) => {
+dashboardRoutes.get('/stats/hotels/:hotelId', async (c) => {
   const dashboardController = c.get('dashboardController'); 
   return dashboardController.getStats(c);
 });
