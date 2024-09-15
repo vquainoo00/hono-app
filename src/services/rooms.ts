@@ -3,8 +3,11 @@ import { paginate } from '../utils/pagination';
 
 
 type Rooms = {
-  name: string
+  number: string
   hotelId: string,
+  branchId: string,
+  roomCategoryId: string,
+  floor: string
 }
 // Service function to get all room
 
@@ -28,7 +31,10 @@ export default class RoomService {
       const roomId: string = uuidv7(); // Generating a unique ID for the room
       const payload = {
         roomId: roomId,
-        name: data.name,
+        number: data.number,
+        floor: data.floor,
+        branchId: data.branchId,
+        roomCategoryId: data.roomCategoryId,
         hotelId: data.hotelId,
       }
       const room = await this.prisma.rooms.create({

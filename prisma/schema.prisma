@@ -9,6 +9,28 @@ generator client {
   previewFeatures = ["driverAdapters"]
 }
 
+model Bookings {
+  bookingId    String    @id @default(uuid())
+  hotelId     String
+  branchId     String
+  roomId       String
+  staffId      String
+  guestContact String
+  guestName    String
+  checkInDate  DateTime
+  checkOutDate DateTime
+  currency     String
+  price        Float
+  status       String   @default("PENDING") 
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  hotel   Hotels   @relation(fields: [hotelId], references: [hotelId])
+  branch  Branches  @relation(fields: [branchId], references: [branchId])
+  room    Rooms    @relation(fields: [roomId], references: [roomId])
+}
+
 model Hotels {
   hotelId        String   @id @default(uuid()) // Using uuid() to generate unique IDs
   name      String
@@ -17,6 +39,8 @@ model Hotels {
   contactPhone String?
   contactEmail String?
   createdAt DateTime @default(now())
+  bookings Bookings[]
+
 }
 
 model Branches {
@@ -31,13 +55,18 @@ model Branches {
   email String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  bookings Bookings[]
 }
 
 model Rooms {
   roomId        String   @id @default(uuid()) // Using uuid() to generate unique IDs
-  name      String
-  hotelId   String
+  number      String?
+  branchId   String?
+  roomCategoryId   String?
+  hotelId   String?
+  floor   String?
   createdAt DateTime @default(now())
+  bookings Bookings[]
 }
 
 
@@ -59,18 +88,3 @@ model Users {
   createdAt DateTime @default(now())
 }
 
-model Bookings {
-  bookingId    String    @id @default(uuid())
-  branchId     String
-  roomId       String
-  staffId      String
-  guestContact String
-  guestName    String
-  checkInDate  DateTime
-  checkOutDate DateTime
-  currency     String
-  price        Float
-  status       String   @default("PENDING") 
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-}

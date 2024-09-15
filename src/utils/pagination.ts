@@ -17,13 +17,17 @@ export async function paginate<T>(
   orderKey: string,
   cursor: string | null,
   itemsPerPage: number = 20,
-  filters?: object
+  filters?: object,
+  include?: object
 ): Promise<PaginationResult<T>> {
   const take = itemsPerPage + 1; // Fetch one extra item to check if there's a next page
 
+  // Build the query object
   const query: any = {
     take,
     orderBy: { [orderKey]: 'desc' },
+    where: filters ? filters : {}, // Apply filters if they exist
+    include: include ? include : {}, // Include related data if provided
   };
 
   if (cursor) {
@@ -32,21 +36,18 @@ export async function paginate<T>(
   }
 
   // Fetch data from the specified model
-  let data: any[];
-
-  if (filters) {
-    data = await (prisma[model] as any).findMany({where: {filters}});
-  }
-  else {
-
-    data = await (prisma[model] as any).findMany(query);
-  }
+  const data: any[] = await (prisma[model] as any).findMany(query);
 
   const hasNextPage = data.length > itemsPerPage;
   const resultData = hasNextPage ? data.slice(0, -1) : data; // Remove the extra item if next page exists
   const nextCursor = hasNextPage ? resultData[resultData.length - 1][orderKey] : null;
 
   return {
-    data: resultData, metadata: {hasNextPage: hasNextPage, nextCursor: nextCursor}
+    data: resultData,
+    metadata: {
+      hasNextPage,
+      nextCursor,
+    },
   };
 }
+

@@ -17,12 +17,11 @@ type Bindings = {
 
 // Initialize Hono app with Cloudflare environment bindings
 const app = new Hono<{ Bindings: Bindings }>();
-app.use('*', cors())
 app.use(
   '*',
   cors({
     origin: '*',
-    allowHeaders: ['X-Custom-Header', 'Upgrade-Insecure-Requests'],
+    allowHeaders: ['*'],
     allowMethods: ['POST', 'GET', 'OPTIONS'],
     exposeHeaders: ['Content-Length'],
     maxAge: 600,

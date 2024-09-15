@@ -13,8 +13,9 @@ export default class BookingsController {
 
     const bookingsService = new BookingsService(this.prisma);
     try {
-      const room = await bookingsService.createBooking(request.body);
-      return request.json(createResponse(201, 'Booking created successfully', room), 201);
+      const payload = await request.req.json()
+      const booking = await bookingsService.createBooking(payload);
+      return request.json(createResponse(201, 'Booking created successfully', booking), 201);
     } catch (error) {
       return handleServiceError(error, request);
     }

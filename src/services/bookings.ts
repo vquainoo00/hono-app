@@ -9,7 +9,7 @@ enum Statuses {
 
 
 interface Bookings {
-    bookingId: string,
+    bookingId?: string,
     branchId: string,
     roomId: string,
     staffId: string,
@@ -30,13 +30,16 @@ export default class BookingsService {
         this.prisma = prisma
     }
 
-    async createBooking(data: any): Promise<Bookings>{
+    async createBooking(data: Bookings): Promise<Bookings>{
         try {
         const bookingId: string = uuidv7()
+        data.checkInDate =  new Date(data.checkInDate.replace(" ", "T")).toISOString();
+        data.checkInDate = new Date(data.checkInDate.replace(" ", "T")).toISOString();
+
+
         const payload = {
             bookingId: bookingId,
-            ...data,
-    
+            ...data
           }
         
         return await this.prisma.bookings.create({data: payload});
@@ -49,7 +52,12 @@ export default class BookingsService {
     }
 
     async getBookings(cursor: string | null, itemsPerPage: number | 20, queryFilters?: any) {
-        return await paginate(this.prisma, 'bookings', 'bookingId', cursor, itemsPerPage);
+        const includeTables = {
+            hotel: true,    // Include hotel details
+            branch: true,   // Include branch details
+          }
+
+        return await paginate(this.prisma, 'bookings', 'bookingId', cursor, itemsPerPage, {}, includeTables);
 
     }
 }
