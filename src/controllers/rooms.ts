@@ -28,7 +28,7 @@ export default class RoomsController {
 
   async getRooms(request: Request) {
     const cursor = request.req.query('cursor') || null;
-    const itemsPerPage = parseInt(request.req.query('perPage') || '5', 10);
+    const itemsPerPage = parseInt(request.req.query('perPage') || '30', 10);
     const roomService = new RoomsServices(this.prisma);
 
     try {
